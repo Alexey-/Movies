@@ -5,7 +5,7 @@ import com.example.movies.BuildConfig;
 public final class Log {
 
     public static final String DEFAULT_TAG = "Movies";
-    public static final boolean LOG_ENABLED = true;//BuildConfig.DEBUG;
+    public static final boolean LOG_ENABLED = BuildConfig.DEBUG;
 
     public static void logLongText(String tag, String text) {
             v("=========");

@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Movies</string>
+
+    <!-- General messages -->
+    <string name="update_complete">Updated!</string>
+    <string name="update_failed">Update failed</string>
+    <string name="error_unknown">Unknown error. Please try again later</string>
+    <string name="error_no_internet">Please check your Internet connection and try again</string>
+    <string name="error_invalid_api_key">Invalid API key. Please replace value in res/values/apikey.xml</string>
+
+    <!-- Movies list activity -->
+    <string name="movies_list_most_popular">Most Popular</string>
+    <string name="movies_list_top_rated">Top Rated</string>
+
 </resources>

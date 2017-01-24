@@ -1,38 +1,154 @@
 package com.example.movies.ui;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.movies.model.Movie;
+import com.example.movies.R;
 import com.example.movies.model.MoviesList;
+import com.example.movies.model.api.ServerError;
 import com.example.movies.utils.Log;
 
-public class MoviesListActivity extends AppCompatActivity {
+public class MoviesListActivity extends AppCompatActivity implements MoviesList.OnUpdateListener, SwipeRefreshLayout.OnRefreshListener {
+
+    private static final String BUNDLE_EXTRA_MOVIES_LIST = "BUNDLE_EXTRA_MOVIES_LIST";
+
+    private static final int PREFERRED_CELL_WIDTH_DIP = 185;
+    private static final float POSTER_ASPECT_RATE = 1.5027f;
+
+    private MoviesList mMoviesList;
+
+    private int mCellWidthPixels;
+    private int mCellHeightPixels;
+
+    private TextView mErrorMessage;
+    private SwipeRefreshLayout mRefreshLayout;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final MoviesList topRated = new MoviesList(MoviesList.SortOrder.TOP_RATED);
-        topRated.addOnUpdateListener(new MoviesList.OnUpdateListener() {
-            @Override
-            public void onUpdateComplete() {
-                Log.d("Top rated updated");
-                Log.d("=====");
-                for (Movie movie : topRated.getMovies()) {
-                    Log.d(movie.toString());
-                }
-                Log.d("=====");
-            }
+        if (savedInstanceState == null) {
+            mMoviesList = new MoviesList(MoviesList.SortOrder.MOST_POPULAR);
+        } else {
+            mMoviesList = (MoviesList) savedInstanceState.getSerializable(BUNDLE_EXTRA_MOVIES_LIST);
+        }
 
-            @Override
-            public void onUpdateFailed() {
-                Log.w("Failed to update top rated movies");
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int screenWidthPixels = displayMetrics.widthPixels;
+        int screenWidthDp = Math.round(screenWidthPixels / displayMetrics.density);
+
+        int columnsCount = Math.round(screenWidthDp / (float)PREFERRED_CELL_WIDTH_DIP);
+        mCellWidthPixels = screenWidthPixels / columnsCount;
+        mCellHeightPixels = Math.round(mCellWidthPixels * POSTER_ASPECT_RATE);
+
+        setContentView(R.layout.movies_list_activity);
+        mErrorMessage = (TextView) findViewById(R.id.tv_error_message);
+        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_movies);
+        mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
+
+        mRefreshLayout.setOnRefreshListener(this);
+
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, columnsCount));
+
+        reloadRecyclerView();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(BUNDLE_EXTRA_MOVIES_LIST, mMoviesList);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mMoviesList.addOnUpdateListener(this);
+        if (mMoviesList.needsUpdate()) {
+            mMoviesList.update();
+        }
+        refreshInterface();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mMoviesList.removeOnUpdateListener(this);
+    }
+
+    private void changeSortOrder(MoviesList.SortOrder newOrder) {
+        if (mMoviesList.getSortOrder() != newOrder) {
+            mMoviesList.removeOnUpdateListener(this);
+            mMoviesList = new MoviesList(newOrder);
+            mMoviesList.addOnUpdateListener(this);
+            mMoviesList.update();
+            refreshInterface();
+        }
+    }
+
+    private void reloadRecyclerView() {
+        MoviesListAdapter adapter = new MoviesListAdapter(mMoviesList.getMovies(), mCellWidthPixels, mCellHeightPixels);
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    private void refreshInterface() {
+        mRefreshLayout.setRefreshing(mMoviesList.isUpdating());
+
+        if (mMoviesList.hasData()) {
+            Log.v("Have actual data to display");
+            mErrorMessage.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.GONE);
+            if (mMoviesList.isUpdating()) {
+                Log.v("No data, but update is in progress");
+            } else if (mMoviesList.getLastError() == ServerError.NO_INTERNET_CONNECTION) {
+                Log.v("No data, no internet");
+                mErrorMessage.setText(R.string.error_no_internet);
+            } else if (mMoviesList.getLastError() == ServerError.INVALID_API_KEY) {
+                mErrorMessage.setText(R.string.error_invalid_api_key);
+            } else {
+                Log.v("No data, error during last reload");
+                mErrorMessage.setText(R.string.error_unknown);
             }
-        });
-        topRated.update();
+        }
+    }
+
+    private Toast mToast;
+
+    private void showToast(int messageRes) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(this, messageRes, Toast.LENGTH_LONG);
+        mToast.show();
+    }
+
+    @Override
+    public void onUpdateComplete() {
+        showToast(R.string.update_complete);
+        reloadRecyclerView();
+        refreshInterface();
+    }
+
+    @Override
+    public void onUpdateFailed() {
+        showToast(R.string.update_failed);
+        refreshInterface();
+    }
+
+    @Override
+    public void onRefresh() {
+        mMoviesList.update();
     }
 
 }

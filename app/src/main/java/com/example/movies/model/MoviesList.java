@@ -39,6 +39,10 @@ public class MoviesList implements Serializable {
         mSortOrder = sortOrder;
     }
 
+    public SortOrder getSortOrder() {
+        return mSortOrder;
+    }
+
     public List<Movie> getMovies() {
         if (mMovies == null) {
             return Collections.emptyList();
@@ -96,6 +100,10 @@ public class MoviesList implements Serializable {
             }
 
         }.execute();
+    }
+
+    public boolean hasData() {
+        return mLastUpdate != null;
     }
 
     public boolean isUpdating() {

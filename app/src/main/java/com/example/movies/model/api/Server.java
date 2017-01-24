@@ -21,7 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Server {
 
     private static final String TAG = "TMDB-API";
-    private static final String BASE_URL = "http://api.themoviedb.org/3/";
+    public static final String BASE_URL = "http://api.themoviedb.org/3/";
+    public static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
 
     public static final int DEFAULT_CONNECTION_TIMEOUT = 30000;
     public static final int DEFAULT_READ_TIMEOUT = 30000;
