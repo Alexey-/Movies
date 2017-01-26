@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,16 +87,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
         mMoviesList.removeOnUpdateListener(this);
     }
 
-    private void changeSortOrder(MoviesList.SortOrder newOrder) {
-        if (mMoviesList.getSortOrder() != newOrder) {
-            mMoviesList.removeOnUpdateListener(this);
-            mMoviesList = new MoviesList(newOrder);
-            mMoviesList.addOnUpdateListener(this);
-            mMoviesList.update();
-            refreshInterface();
-        }
-    }
-
     private void reloadRecyclerView() {
         MoviesListAdapter adapter = new MoviesListAdapter(mMoviesList.getMovies(), mCellWidthPixels, mCellHeightPixels);
         mRecyclerView.setAdapter(adapter);
@@ -120,6 +112,15 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
                 Log.v("No data, error during last reload");
                 mErrorMessage.setText(R.string.error_unknown);
             }
+        }
+
+        switch (mMoviesList.getSortOrder()) {
+            case MOST_POPULAR:
+                setTitle(R.string.movies_list_most_popular);
+                break;
+            case TOP_RATED:
+                setTitle(R.string.movies_list_top_rated);
+                break;
         }
     }
 
@@ -149,6 +150,36 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
     @Override
     public void onRefresh() {
         mMoviesList.update();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.movies_list_menu, menu);
+        return true;
+    }
+
+    private void changeSortOrder(MoviesList.SortOrder newOrder) {
+        if (mMoviesList.getSortOrder() != newOrder) {
+            mMoviesList.removeOnUpdateListener(this);
+            mMoviesList = new MoviesList(newOrder);
+            mMoviesList.addOnUpdateListener(this);
+            mMoviesList.update();
+            refreshInterface();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_show_most_popular:
+                changeSortOrder(MoviesList.SortOrder.MOST_POPULAR);
+                return true;
+            case R.id.action_show_top_rated:
+                changeSortOrder(MoviesList.SortOrder.TOP_RATED);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

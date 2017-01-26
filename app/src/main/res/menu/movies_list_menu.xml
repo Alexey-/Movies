@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_sort"
+        android:orderInCategory="1"
+        app:showAsAction="always"
+        android:title="@string/movies_list_sort_by"
+        android:icon="@drawable/ic_sort_white_24dp">
+        <menu>
+            <item android:id="@+id/action_show_most_popular"
+                  android:title="@string/movies_list_most_popular" />
+            <item android:id="@+id/action_show_top_rated"
+                  android:title="@string/movies_list_top_rated" />
+        </menu>
+    </item>
+
+</menu>
