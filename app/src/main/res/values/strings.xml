@@ -13,4 +13,9 @@
     <string name="movies_list_most_popular">Most Popular</string>
     <string name="movies_list_top_rated">Top Rated</string>
 
+    <!-- Movie details activity -->
+    <string name="movie_details_release_date">Release date:</string>
+    <string name="movie_details_user_rating">User rating:</string>
+    <string name="movie_details_plot_synopsis">Synopsis:</string>
+
 </resources>
