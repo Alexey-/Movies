@@ -1,5 +1,6 @@
 package com.example.movies.ui;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.movies.R;
+import com.example.movies.databinding.MovieDetailsActivityBinding;
 import com.example.movies.model.Movie;
 
 import org.joda.time.format.DateTimeFormat;
@@ -22,11 +24,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private Movie mMovie;
 
-    private ImageView mPoster;
-    private TextView mTitle;
-    private TextView mReleaseDate;
-    private TextView mUserRating;
-    private TextView mPlot;
+    private MovieDetailsActivityBinding mBinding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,35 +38,29 @@ public class MovieDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setTitle(mMovie.getOriginalTitle());
-        setContentView(R.layout.movie_details_activity);
-
-        mPoster = (ImageView) findViewById(R.id.iv_poster);
-        mTitle = (TextView) findViewById(R.id.tv_title);
-        mReleaseDate = (TextView) findViewById(R.id.tv_release_date);
-        mUserRating = (TextView) findViewById(R.id.tv_user_rating);
-        mPlot = (TextView) findViewById(R.id.tv_plot);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.movie_details_activity);
 
         int posterWidthPixels = (int) getResources().getDimension(R.dimen.movie_details_poster_width);
-        Glide.with(mPoster.getContext())
+        Glide.with(this)
                 .load(mMovie.getPosterUrl(Movie.PosterSize.bestFit(posterWidthPixels)))
-                .into(mPoster);
-        mTitle.setText(mMovie.getOriginalTitle());
+                .into(mBinding.poster);
+        mBinding.title.setText(mMovie.getOriginalTitle());
         if (mMovie.getReleaseDate() != null) {
             DateTimeFormatter format = DateTimeFormat.mediumDate();
-            mReleaseDate.setText(format.print(mMovie.getReleaseDate()));
+            mBinding.releaseDate.setText(format.print(mMovie.getReleaseDate()));
         } else {
-            mReleaseDate.setText("-");
+            mBinding.releaseDate.setText("-");
         }
         if (mMovie.getUserRating() != null) {
             DecimalFormat format = new DecimalFormat("#.0");
-            mUserRating.setText(format.format(mMovie.getUserRating()));
+            mBinding.userRating.setText(format.format(mMovie.getUserRating()));
         } else {
-            mReleaseDate.setText("-");
+            mBinding.userRating.setText("-");
         }
         if (mMovie.getPlotSynopsis() != null) {
-            mPlot.setText(mMovie.getPlotSynopsis());
+            mBinding.plot.setText(mMovie.getPlotSynopsis());
         } else {
-            mPlot.setText("-");
+            mBinding.plot.setText("-");
         }
     }
 

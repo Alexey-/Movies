@@ -1,19 +1,19 @@
 package com.example.movies.ui;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.movies.R;
+import com.example.movies.databinding.MoviesListActivityBinding;
 import com.example.movies.model.MoviesList;
 import com.example.movies.model.api.ServerError;
 import com.example.movies.utils.Log;
@@ -30,9 +30,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
     private int mCellWidthPixels;
     private int mCellHeightPixels;
 
-    private TextView mErrorMessage;
-    private SwipeRefreshLayout mRefreshLayout;
-    private RecyclerView mRecyclerView;
+    private MoviesListActivityBinding mBinding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,14 +51,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
         mCellWidthPixels = screenWidthPixels / columnsCount;
         mCellHeightPixels = Math.round(mCellWidthPixels * POSTER_ASPECT_RATE);
 
-        setContentView(R.layout.movies_list_activity);
-        mErrorMessage = (TextView) findViewById(R.id.tv_error_message);
-        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_movies);
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.movies_list_activity);
 
-        mRefreshLayout.setOnRefreshListener(this);
-
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, columnsCount));
+        mBinding.refreshLayout.setOnRefreshListener(this);
+        mBinding.recycler.setLayoutManager(new GridLayoutManager(this, columnsCount));
 
         reloadRecyclerView();
     }
@@ -89,28 +83,28 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
 
     private void reloadRecyclerView() {
         MoviesListAdapter adapter = new MoviesListAdapter(mMoviesList.getMovies(), mCellWidthPixels, mCellHeightPixels);
-        mRecyclerView.setAdapter(adapter);
+        mBinding.recycler.setAdapter(adapter);
     }
 
     private void refreshInterface() {
-        mRefreshLayout.setRefreshing(mMoviesList.isUpdating());
+        mBinding.refreshLayout.setRefreshing(mMoviesList.isUpdating());
 
         if (mMoviesList.hasData()) {
             Log.v("Have actual data to display");
-            mErrorMessage.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
+            mBinding.errorMessage.setVisibility(View.GONE);
+            mBinding.recycler.setVisibility(View.VISIBLE);
         } else {
-            mRecyclerView.setVisibility(View.GONE);
+            mBinding.recycler.setVisibility(View.GONE);
             if (mMoviesList.isUpdating()) {
                 Log.v("No data, but update is in progress");
             } else if (mMoviesList.getLastError() == ServerError.NO_INTERNET_CONNECTION) {
                 Log.v("No data, no internet");
-                mErrorMessage.setText(R.string.error_no_internet);
+                mBinding.errorMessage.setText(R.string.error_no_internet);
             } else if (mMoviesList.getLastError() == ServerError.INVALID_API_KEY) {
-                mErrorMessage.setText(R.string.error_invalid_api_key);
+                mBinding.errorMessage.setText(R.string.error_invalid_api_key);
             } else {
                 Log.v("No data, error during last reload");
-                mErrorMessage.setText(R.string.error_unknown);
+                mBinding.errorMessage.setText(R.string.error_unknown);
             }
         }
 
