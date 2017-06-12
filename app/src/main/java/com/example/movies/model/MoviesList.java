@@ -22,12 +22,7 @@ import java.util.List;
 
 public class MoviesList implements Serializable {
 
-    public enum SortOrder {
-        MOST_POPULAR,
-        TOP_RATED
-    }
-
-    private SortOrder mSortOrder;
+    private MoviesListType mMoviesListType;
 
     private ArrayList<Movie> mMovies;
 
@@ -35,12 +30,12 @@ public class MoviesList implements Serializable {
     private LocalDateTime mLastUpdate;
     private ServerError mLastError;
 
-    public MoviesList(SortOrder sortOrder) {
-        mSortOrder = sortOrder;
+    public MoviesList(MoviesListType moviesListType) {
+        mMoviesListType = moviesListType;
     }
 
-    public SortOrder getSortOrder() {
-        return mSortOrder;
+    public MoviesListType getMoviesListType() {
+        return mMoviesListType;
     }
 
     public List<Movie> getMovies() {
@@ -119,13 +114,13 @@ public class MoviesList implements Serializable {
     }
 
     private ServerMethod getRequestMethod() {
-        switch (mSortOrder) {
+        switch (mMoviesListType) {
             case MOST_POPULAR:
                 return ServerMethod.POPULAR_MOVIES;
             case TOP_RATED:
                 return ServerMethod.TOP_RATED_MOVIES;
             default:
-                throw new RuntimeException("Unknown sort order");
+                throw new RuntimeException("Unknown list type");
         }
     }
 

@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.movies.R;
@@ -51,14 +49,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
         } else {
             mBinding.releaseDate.setText("-");
         }
-        if (mMovie.getUserRating() != null) {
+        if (mMovie.getVoteAverage() != null) {
             DecimalFormat format = new DecimalFormat("#.0");
-            mBinding.userRating.setText(format.format(mMovie.getUserRating()));
+            mBinding.userRating.setText(format.format(mMovie.getVoteAverage()));
         } else {
             mBinding.userRating.setText("-");
         }
-        if (mMovie.getPlotSynopsis() != null) {
-            mBinding.plot.setText(mMovie.getPlotSynopsis());
+        if (mMovie.getOverview() != null) {
+            mBinding.plot.setText(mMovie.getOverview());
         } else {
             mBinding.plot.setText("-");
         }

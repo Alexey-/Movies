@@ -1,11 +1,15 @@
 package com.example.movies.model;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.text.TextUtils;
 
 import com.example.movies.model.api.Server;
+import com.example.movies.model.storage.MoviesContract;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,22 +17,49 @@ import java.io.Serializable;
 
 public class Movie implements Serializable {
 
+    private static final DateTimeFormatter RELEASE_DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd");
+
     private String mId;
     private String mOriginalTitle;
-    private String mPoster;
-    private String mPlotSynopsis;
-    private Double mUserRating;
+    private String mPosterPath;
+    private String mOverview;
+    private Double mVoteAverage;
     private LocalDate mReleaseDate;
 
-    Movie(JSONObject json) throws JSONException {
+    public Movie(JSONObject json) throws JSONException {
         mId = json.getString("id");
         mOriginalTitle = json.getString("original_title");
-        mPoster = json.optString("poster_path");
-        mPlotSynopsis = json.optString("overview");
-        mUserRating = json.optDouble("vote_average");
+        mPosterPath = json.optString("poster_path");
+        mOverview = json.optString("overview");
+        mVoteAverage = json.optDouble("vote_average");
         String dateAsString = json.optString("release_date");
         if (!TextUtils.isEmpty(dateAsString)) {
-            mReleaseDate = LocalDate.parse(dateAsString, DateTimeFormat.forPattern("yyyy-MM-dd"));
+            mReleaseDate = LocalDate.parse(dateAsString, RELEASE_DATE_FORMAT);
+        }
+    }
+
+    public Movie(Cursor cursor) {
+        mId = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesTable._ID));
+        mOriginalTitle = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesTable.COLUMN_ORIGINAL_TITLE));
+        mPosterPath = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesTable.COLUMN_POSTER_PATH));
+        mOverview = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesTable.COLUMN_OVERVIEW));
+        mVoteAverage = cursor.getDouble(cursor.getColumnIndex(MoviesContract.MoviesTable.COLUMN_VOTE_AVERAGE));
+        String dateAsString = cursor.getString(cursor.getColumnIndex(MoviesContract.MoviesTable.COLUMN_RELEASE_DATE));
+        if (!TextUtils.isEmpty(dateAsString)) {
+            mReleaseDate = LocalDate.parse(dateAsString, RELEASE_DATE_FORMAT);
+        }
+    }
+
+    public void bindToContentValues(ContentValues values) {
+        values.put(MoviesContract.MoviesTable._ID, mId);
+        values.put(MoviesContract.MoviesTable.COLUMN_ORIGINAL_TITLE, mOriginalTitle);
+        values.put(MoviesContract.MoviesTable.COLUMN_POSTER_PATH, mPosterPath);
+        values.put(MoviesContract.MoviesTable.COLUMN_OVERVIEW, mOverview);
+        values.put(MoviesContract.MoviesTable.COLUMN_VOTE_AVERAGE, mVoteAverage);
+        if (mReleaseDate != null) {
+            values.put(MoviesContract.MoviesTable.COLUMN_RELEASE_DATE, mReleaseDate.toString(RELEASE_DATE_FORMAT));
+        } else {
+            values.putNull(MoviesContract.MoviesTable.COLUMN_RELEASE_DATE);
         }
     }
 
@@ -75,20 +106,51 @@ public class Movie implements Serializable {
         StringBuilder builder = new StringBuilder();
         builder.append(Server.BASE_IMAGE_URL);
         builder.append(size.mKey);
-        builder.append(mPoster);
+        builder.append(mPosterPath);
         return builder.toString();
     }
 
-    public String getPlotSynopsis() {
-        return mPlotSynopsis;
+    public String getOverview() {
+        return mOverview;
     }
 
-    public Double getUserRating() {
-        return mUserRating;
+    public Double getVoteAverage() {
+        return mVoteAverage;
     }
 
     public LocalDate getReleaseDate() {
         return mReleaseDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Movie movie = (Movie) o;
+
+        if (!mId.equals(movie.mId)) return false;
+        if (mOriginalTitle != null ? !mOriginalTitle.equals(movie.mOriginalTitle) : movie.mOriginalTitle != null)
+            return false;
+        if (mPosterPath != null ? !mPosterPath.equals(movie.mPosterPath) : movie.mPosterPath != null)
+            return false;
+        if (mOverview != null ? !mOverview.equals(movie.mOverview) : movie.mOverview != null)
+            return false;
+        if (mVoteAverage != null ? !mVoteAverage.equals(movie.mVoteAverage) : movie.mVoteAverage != null)
+            return false;
+        return mReleaseDate != null ? mReleaseDate.equals(movie.mReleaseDate) : movie.mReleaseDate == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mId.hashCode();
+        result = 31 * result + (mOriginalTitle != null ? mOriginalTitle.hashCode() : 0);
+        result = 31 * result + (mPosterPath != null ? mPosterPath.hashCode() : 0);
+        result = 31 * result + (mOverview != null ? mOverview.hashCode() : 0);
+        result = 31 * result + (mVoteAverage != null ? mVoteAverage.hashCode() : 0);
+        result = 31 * result + (mReleaseDate != null ? mReleaseDate.hashCode() : 0);
+        return result;
     }
 
     @Override
@@ -100,3 +162,4 @@ public class Movie implements Serializable {
     }
 
 }
+

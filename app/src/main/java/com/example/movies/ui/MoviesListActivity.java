@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.movies.R;
 import com.example.movies.databinding.MoviesListActivityBinding;
 import com.example.movies.model.MoviesList;
+import com.example.movies.model.MoviesListType;
 import com.example.movies.model.api.ServerError;
 import com.example.movies.utils.Log;
 
@@ -37,7 +38,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            mMoviesList = new MoviesList(MoviesList.SortOrder.MOST_POPULAR);
+            mMoviesList = new MoviesList(MoviesListType.MOST_POPULAR);
         } else {
             mMoviesList = (MoviesList) savedInstanceState.getSerializable(BUNDLE_EXTRA_MOVIES_LIST);
         }
@@ -108,7 +109,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
             }
         }
 
-        switch (mMoviesList.getSortOrder()) {
+        switch (mMoviesList.getMoviesListType()) {
             case MOST_POPULAR:
                 setTitle(R.string.movies_list_most_popular);
                 break;
@@ -152,8 +153,8 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
         return true;
     }
 
-    private void changeSortOrder(MoviesList.SortOrder newOrder) {
-        if (mMoviesList.getSortOrder() != newOrder) {
+    private void changeSortOrder(MoviesListType newOrder) {
+        if (mMoviesList.getMoviesListType() != newOrder) {
             mMoviesList.removeOnUpdateListener(this);
             mMoviesList = new MoviesList(newOrder);
             mMoviesList.addOnUpdateListener(this);
@@ -166,10 +167,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_show_most_popular:
-                changeSortOrder(MoviesList.SortOrder.MOST_POPULAR);
+                changeSortOrder(MoviesListType.MOST_POPULAR);
                 return true;
             case R.id.action_show_top_rated:
-                changeSortOrder(MoviesList.SortOrder.TOP_RATED);
+                changeSortOrder(MoviesListType.TOP_RATED);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
