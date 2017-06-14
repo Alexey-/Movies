@@ -1,6 +1,7 @@
 package com.example.movies.model;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
 
@@ -15,7 +16,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-public class Movie implements Serializable {
+public class Movie {
 
     private static final DateTimeFormatter RELEASE_DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd");
 
@@ -25,6 +26,22 @@ public class Movie implements Serializable {
     private String mOverview;
     private Double mVoteAverage;
     private LocalDate mReleaseDate;
+
+    public static Movie loadFromDatabase(Context context, String id) {
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(MoviesContract.MOVIES_URI.buildUpon().appendPath(id).build(), null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return new Movie(cursor);
+            } else {
+                return null;
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
 
     public Movie(JSONObject json) throws JSONException {
         mId = json.getString("id");

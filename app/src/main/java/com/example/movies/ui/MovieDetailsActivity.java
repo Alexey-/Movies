@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
 
 public class MovieDetailsActivity extends AppCompatActivity {
 
-    public static final String INTENT_PARAM_MOVIE = "INTENT_PARAM_MOVIE";
+    public static final String INTENT_PARAM_MOVIE_ID = "INTENT_PARAM_MOVIE_ID";
 
     private Movie mMovie;
 
@@ -28,7 +28,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMovie = (Movie) getIntent().getSerializableExtra(INTENT_PARAM_MOVIE);
+        mMovie = Movie.loadFromDatabase(this, getIntent().getStringExtra(INTENT_PARAM_MOVIE_ID));
         if (mMovie == null) {
             throw new NullPointerException();
         }

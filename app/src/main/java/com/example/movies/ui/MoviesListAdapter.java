@@ -1,5 +1,6 @@
 package com.example.movies.ui;
 
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import com.example.movies.R;
 import com.example.movies.model.Movie;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MoviesListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
@@ -17,10 +19,19 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     private int mCellWidthPixels;
     private int mCellHeightPixels;
 
-    public MoviesListAdapter(List<Movie> movies, int cellWidthPixels, int cellHeightPixels) {
-        mMovies = new ArrayList<>(movies);
+    public MoviesListAdapter(int cellWidthPixels, int cellHeightPixels) {
+        mMovies = Collections.emptyList();
         mCellWidthPixels = cellWidthPixels;
         mCellHeightPixels = cellHeightPixels;
+    }
+
+    public void setMovies(List<Movie> movies) {
+        if (movies == null) {
+            mMovies = Collections.emptyList();
+        } else {
+            mMovies = new ArrayList<>(movies);
+        }
+        notifyDataSetChanged();
     }
 
     @Override

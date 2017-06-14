@@ -3,6 +3,8 @@ package com.example.movies.ui;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,34 +16,35 @@ import android.widget.Toast;
 
 import com.example.movies.R;
 import com.example.movies.databinding.MoviesListActivityBinding;
-import com.example.movies.model.MoviesList;
+import com.example.movies.model.Movie;
+import com.example.movies.model.MoviesListLoader;
 import com.example.movies.model.MoviesListType;
 import com.example.movies.model.api.ServerError;
 import com.example.movies.utils.Log;
 
-public class MoviesListActivity extends AppCompatActivity implements MoviesList.OnUpdateListener, SwipeRefreshLayout.OnRefreshListener {
+import java.util.List;
+
+public class MoviesListActivity extends AppCompatActivity
+        implements MoviesListLoader.OnUpdateListener, SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<List<Movie>> {
 
     private static final String BUNDLE_EXTRA_MOVIES_LIST = "BUNDLE_EXTRA_MOVIES_LIST";
 
     private static final int PREFERRED_CELL_WIDTH_DIP = 185;
     private static final float POSTER_ASPECT_RATE = 1.5027f;
 
-    private MoviesList mMoviesList;
-
     private int mCellWidthPixels;
     private int mCellHeightPixels;
 
     private MoviesListActivityBinding mBinding;
 
+    private MoviesListLoader mMoviesListLoader;
+    private MoviesListAdapter mAdapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            mMoviesList = new MoviesList(MoviesListType.MOST_POPULAR);
-        } else {
-            mMoviesList = (MoviesList) savedInstanceState.getSerializable(BUNDLE_EXTRA_MOVIES_LIST);
-        }
+        mMoviesListLoader = (MoviesListLoader) getSupportLoaderManager().initLoader(1, null, this);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -57,21 +60,16 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
         mBinding.refreshLayout.setOnRefreshListener(this);
         mBinding.recycler.setLayoutManager(new GridLayoutManager(this, columnsCount));
 
-        reloadRecyclerView();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(BUNDLE_EXTRA_MOVIES_LIST, mMoviesList);
+        mAdapter = new MoviesListAdapter(mCellWidthPixels, mCellHeightPixels);
+        mBinding.recycler.setAdapter(mAdapter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mMoviesList.addOnUpdateListener(this);
-        if (mMoviesList.needsUpdate()) {
-            mMoviesList.update();
+        mMoviesListLoader.addOnUpdateListener(this);
+        if (mMoviesListLoader.needsUpdate()) {
+            mMoviesListLoader.update();
         }
         refreshInterface();
     }
@@ -79,29 +77,24 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
     @Override
     protected void onPause() {
         super.onPause();
-        mMoviesList.removeOnUpdateListener(this);
-    }
-
-    private void reloadRecyclerView() {
-        MoviesListAdapter adapter = new MoviesListAdapter(mMoviesList.getMovies(), mCellWidthPixels, mCellHeightPixels);
-        mBinding.recycler.setAdapter(adapter);
+        mMoviesListLoader.removeOnUpdateListener(this);
     }
 
     private void refreshInterface() {
-        mBinding.refreshLayout.setRefreshing(mMoviesList.isUpdating());
+        mBinding.refreshLayout.setRefreshing(mMoviesListLoader.isUpdating());
 
-        if (mMoviesList.hasData()) {
+        if (mMoviesListLoader.hasData()) {
             Log.v("Have actual data to display");
             mBinding.errorMessage.setVisibility(View.GONE);
             mBinding.recycler.setVisibility(View.VISIBLE);
         } else {
             mBinding.recycler.setVisibility(View.GONE);
-            if (mMoviesList.isUpdating()) {
+            if (mMoviesListLoader.isUpdating()) {
                 Log.v("No data, but update is in progress");
-            } else if (mMoviesList.getLastError() == ServerError.NO_INTERNET_CONNECTION) {
+            } else if (mMoviesListLoader.getLastError() == ServerError.NO_INTERNET_CONNECTION) {
                 Log.v("No data, no internet");
                 mBinding.errorMessage.setText(R.string.error_no_internet);
-            } else if (mMoviesList.getLastError() == ServerError.INVALID_API_KEY) {
+            } else if (mMoviesListLoader.getLastError() == ServerError.INVALID_API_KEY) {
                 mBinding.errorMessage.setText(R.string.error_invalid_api_key);
             } else {
                 Log.v("No data, error during last reload");
@@ -109,7 +102,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
             }
         }
 
-        switch (mMoviesList.getMoviesListType()) {
+        switch (mMoviesListLoader.getMoviesListType()) {
             case MOST_POPULAR:
                 setTitle(R.string.movies_list_most_popular);
                 break;
@@ -132,7 +125,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
     @Override
     public void onUpdateComplete() {
         showToast(R.string.update_complete);
-        reloadRecyclerView();
         refreshInterface();
     }
 
@@ -144,7 +136,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
 
     @Override
     public void onRefresh() {
-        mMoviesList.update();
+        mMoviesListLoader.update();
     }
 
     @Override
@@ -154,13 +146,13 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
     }
 
     private void changeSortOrder(MoviesListType newOrder) {
-        if (mMoviesList.getMoviesListType() != newOrder) {
-            mMoviesList.removeOnUpdateListener(this);
-            mMoviesList = new MoviesList(newOrder);
-            mMoviesList.addOnUpdateListener(this);
-            mMoviesList.update();
-            refreshInterface();
-        }
+//        if (mMoviesList.getMoviesListType() != newOrder) {
+//            mMoviesList.removeOnUpdateListener(this);
+//            mMoviesList = new MoviesListLoader(newOrder);
+//            mMoviesList.addOnUpdateListener(this);
+//            mMoviesList.update();
+//            refreshInterface();
+//        }
     }
 
     @Override
@@ -177,4 +169,18 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesList.
         }
     }
 
+    @Override
+    public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+        return new MoviesListLoader(this, MoviesListType.TOP_RATED);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
+        mAdapter.setMovies(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Movie>> loader) {
+        mAdapter.setMovies(null);
+    }
 }
