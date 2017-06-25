@@ -10,6 +10,9 @@ import android.support.annotation.Nullable;
 
 import com.example.movies.model.MoviesListType;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static com.example.movies.model.storage.MoviesContract.AUTHORITY;
 import static com.example.movies.model.storage.MoviesContract.FAVORITES_MOVIES_URI;
 import static com.example.movies.model.storage.MoviesContract.MovieListTypeCrossTable;
@@ -62,14 +65,18 @@ public class MoviesContentProvider extends ContentProvider {
         Cursor result = null;
 
         MoviesListType typeToQuery = null;
+        String idToQuery = null;
 
         switch (sUriMatcher.match(uri)) {
             case MOVIES:
                 result = db.query(MoviesTable.TABLE_NAME, null, null, null, null, null, null);
                 break;
             case MOVIE_WITH_ID:
-            case MOVIES_FAVORITE_WITH_ID:
                 result = db.query(MoviesTable.TABLE_NAME, null, MoviesTable._ID + " = ?", new String[] { uri.getLastPathSegment() }, null, null, null);
+                break;
+            case MOVIES_FAVORITE_WITH_ID:
+                typeToQuery = MoviesListType.FAVORITES;
+                idToQuery = uri.getLastPathSegment();
                 break;
             case MOVIES_MOST_POPULAR:
                 typeToQuery = MoviesListType.MOST_POPULAR;
@@ -85,12 +92,19 @@ public class MoviesContentProvider extends ContentProvider {
         }
 
         if (typeToQuery != null) {
+            List<String> params = new LinkedList<>();
+            params.add(typeToQuery.toString());
+            if (idToQuery != null) {
+                params.add(idToQuery);
+            }
+
             result = db.rawQuery("SELECT " + MoviesTable.TABLE_NAME + ".* " +
                     "FROM " + MoviesTable.TABLE_NAME + " join " + MovieListTypeCrossTable.TABLE_NAME + " on " +
                     MoviesTable._ID + " = " + MovieListTypeCrossTable.COLUMN_MOVIE_ID +
                     " WHERE " + MovieListTypeCrossTable.COLUMN_LIST_TYPE + " = ? " +
+                    (idToQuery == null ? "" : (" AND " + MovieListTypeCrossTable.COLUMN_MOVIE_ID + " = ? ")) +
                     " ORDER BY " + MovieListTypeCrossTable.COLUMN_SORT_ORDER
-                    , new String[] { typeToQuery.toString() });
+                    , params.toArray(new String[0]));
         }
 
         result.setNotificationUri(getContext().getContentResolver(), uri);

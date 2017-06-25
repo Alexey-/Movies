@@ -1,5 +1,6 @@
 package com.example.movies.model;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -137,6 +138,34 @@ public class Movie {
 
     public LocalDate getReleaseDate() {
         return mReleaseDate;
+    }
+
+    public boolean isFavorite(Context context) {
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(MoviesContract.FAVORITES_MOVIES_URI.buildUpon().appendPath(mId).build(), null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return true;
+            } else {
+                return false;
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    public void addToFavorites(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(MoviesContract.MoviesTable._ID, mId);
+        contentResolver.insert(MoviesContract.FAVORITES_MOVIES_URI, values);
+    }
+
+    public void removeFromFavorites(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        contentResolver.delete(MoviesContract.FAVORITES_MOVIES_URI.buildUpon().appendPath(mId).build(), null, null);
     }
 
     @Override

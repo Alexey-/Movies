@@ -16,6 +16,7 @@
     <string name="movies_favorite">Favorite</string>
 
     <!-- Favorites -->
+    <string name="favorite">Favorite</string>
     <string name="favorites_no_favorites_yet">You haven\'t added anything to favorites yet. Press the star icon in one of the movies you like</string>
 
     <!-- Movie details activity -->
