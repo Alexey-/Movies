@@ -7,11 +7,16 @@
     <string name="error_unknown">Unknown error. Please try again later</string>
     <string name="error_no_internet">Please check your Internet connection and try again</string>
     <string name="error_invalid_api_key">Invalid API key. Please replace value in res/values/apikey.xml</string>
+    <string name="open_menu">Open menu</string>
+    <string name="close_menu">Close menu</string>
 
-    <!-- Movies list activity -->
-    <string name="movies_list_sort_by">Sort by</string>
-    <string name="movies_list_most_popular">Most Popular</string>
-    <string name="movies_list_top_rated">Top Rated</string>
+    <!-- Main menu -->
+    <string name="movies_most_popular">Most Popular</string>
+    <string name="movies_top_rated">Top Rated</string>
+    <string name="movies_favorite">Favorite</string>
+
+    <!-- Favorites -->
+    <string name="favorites_no_favorites_yet">You haven\'t added anything to favorites yet. Press the star icon in one of the movies you like</string>
 
     <!-- Movie details activity -->
     <string name="movie_details_release_date">Release date:</string>

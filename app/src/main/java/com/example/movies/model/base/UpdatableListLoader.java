@@ -62,10 +62,6 @@ public abstract class UpdatableListLoader<E> extends LocalListLoader<E> {
 
     protected abstract ServerError performUpdate();
 
-    public boolean hasData() {
-        return mLastUpdate != null || hasLocalData();
-    }
-
     public boolean isUpdating() {
         return mUpdating;
     }

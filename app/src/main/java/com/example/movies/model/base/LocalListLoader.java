@@ -21,6 +21,7 @@ public abstract class LocalListLoader<E> extends AsyncTaskLoader<List<E>> {
     private Uri mUri;
     private ContentObserver mContentObserver;
     private List<E> mData;
+    private boolean mLoadingLocalData;
 
     public LocalListLoader(Context context, Uri uri) {
         super(context);
@@ -61,6 +62,12 @@ public abstract class LocalListLoader<E> extends AsyncTaskLoader<List<E>> {
     }
 
     @Override
+    protected void onForceLoad() {
+        super.onForceLoad();
+        mLoadingLocalData = true;
+    }
+
+    @Override
     public List<E> loadInBackground() {
         Cursor cursor = null;
         try {
@@ -82,6 +89,7 @@ public abstract class LocalListLoader<E> extends AsyncTaskLoader<List<E>> {
         }
 
         mData = data;
+        mLoadingLocalData = false;
 
         if (isStarted()) {
             super.deliverResult(data);
@@ -101,8 +109,12 @@ public abstract class LocalListLoader<E> extends AsyncTaskLoader<List<E>> {
         }
     }
 
-    public boolean hasLocalData() {
-        return mData != null && mData.size() > 0;
+    public boolean isLoadingLocalData() {
+        return mLoadingLocalData;
+    }
+
+    public boolean isLocalDataEmpty() {
+        return mData != null && mData.size() == 0;
     }
 
 }

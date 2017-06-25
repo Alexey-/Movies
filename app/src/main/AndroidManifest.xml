@@ -12,15 +12,12 @@
         android:theme="@style/AppTheme"
         android:name=".MoviesApplication">
 
-        <activity android:name=".ui.MoviesListActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.MovieDetailsActivity"></activity>
-
 
         <provider
             android:authorities="com.example.movies"
