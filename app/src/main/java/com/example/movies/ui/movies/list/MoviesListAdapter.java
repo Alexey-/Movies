@@ -87,6 +87,8 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Mo
             mMovie = movie;
             Glide.with(itemView.getContext())
                     .load(movie.getPosterUrl(Movie.PosterSize.bestFit(widthPixels)))
+                    .placeholder(R.drawable.ic_movie_gray)
+                    .centerCrop()
                     .into(mBinding.poster);
         }
     }

@@ -2,7 +2,6 @@ package com.example.movies.ui.movies.details;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,6 +56,7 @@ public class MovieDetailsFragment extends BaseFragment {
         int posterWidthPixels = (int) getResources().getDimension(R.dimen.movie_details_poster_width);
         Glide.with(this)
                 .load(mMovie.getPosterUrl(Movie.PosterSize.bestFit(posterWidthPixels)))
+                .placeholder(R.drawable.ic_movie_gray)
                 .into(mBinding.poster);
         mBinding.title.setText(mMovie.getOriginalTitle());
         if (mMovie.getReleaseDate() != null) {
