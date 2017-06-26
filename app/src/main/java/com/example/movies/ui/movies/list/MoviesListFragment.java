@@ -1,10 +1,8 @@
 package com.example.movies.ui.movies.list;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -36,7 +34,7 @@ public abstract class MoviesListFragment extends BaseFragment
         if (listType == MoviesListType.FAVORITES) {
             fragment = new FavoriteMoviesListFragment();
         } else {
-            fragment = new UpdatableMoviesListFragment();
+            fragment = new PageableMoviesListFragment();
         }
         fragment.setArguments(bundle);
         return fragment;

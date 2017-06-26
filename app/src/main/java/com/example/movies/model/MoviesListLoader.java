@@ -11,6 +11,7 @@ import com.example.movies.model.api.Response;
 import com.example.movies.model.api.Server;
 import com.example.movies.model.api.ServerError;
 import com.example.movies.model.api.ServerMethod;
+import com.example.movies.model.base.PageableListLoader;
 import com.example.movies.model.base.UpdatableListLoader;
 import com.example.movies.utils.Log;
 
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MoviesListLoader extends UpdatableListLoader<Movie> {
+public class MoviesListLoader extends PageableListLoader<Movie> {
 
     private MoviesListType mMoviesListType;
 
@@ -51,27 +52,11 @@ public class MoviesListLoader extends UpdatableListLoader<Movie> {
 
     @Override
     protected ServerError performUpdate() {
-        Request request = new Request(getRequestMethod());
-        Response response = Server.sendRequest(request);
+        Response response = requestPage(1);
         if (response.isSuccessful()) {
             try {
-                ArrayList<Movie> movies = new ArrayList<>();
-                JSONObject json = new JSONObject(response.getResponseText());
-                JSONArray array = json.getJSONArray("results");
-                for (int i = 0; i < array.length(); ++i) {
-                    movies.add(new Movie(array.getJSONObject(i)));
-                }
-
-                ContentValues[] values = new ContentValues[movies.size()];
-                int i = 0;
-                for (Movie movie : movies) {
-                    ContentValues value = new ContentValues();
-                    movie.bindToContentValues(value);
-                    values[i++] = value;
-                }
-
-                getContext().getContentResolver().bulkInsert(mMoviesListType.getUri(), values);
-
+                List<Movie> movies = parseMovies(response);
+                setMovies(movies);
                 return null;
             } catch (JSONException e) {
                 Log.e(Log.DEFAULT_TAG, "Failed to parse movies", e);
@@ -80,6 +65,70 @@ public class MoviesListLoader extends UpdatableListLoader<Movie> {
         } else {
             return response.getError();
         }
+    }
+
+    @Override
+    protected ServerError performLoadNextPage(int pageNumber) {
+        Response response = requestPage(pageNumber);
+        if (response.isSuccessful()) {
+            try {
+                List<Movie> newMovies = parseMovies(response);
+                if (newMovies.size() == 0) {
+                    onEndReached();
+                }
+                List<Movie> currentMovies = getMovies();
+                currentMovies.addAll(newMovies);
+                setMovies(currentMovies);
+                return null;
+            } catch (JSONException e) {
+                Log.e(Log.DEFAULT_TAG, "Failed to parse movies", e);
+                return ServerError.UNKNOWN_ERROR;
+            }
+        } else {
+            return response.getError();
+        }
+    }
+
+    private Response requestPage(int pageNumber) {
+        Request request = new Request(getRequestMethod());
+        request.addParameter("page", pageNumber);
+        return Server.sendRequest(request);
+    }
+
+    private List<Movie> parseMovies(Response response) throws JSONException {
+        ArrayList<Movie> movies = new ArrayList<>();
+        JSONObject json = new JSONObject(response.getResponseText());
+        JSONArray array = json.getJSONArray("results");
+        for (int i = 0; i < array.length(); ++i) {
+            movies.add(new Movie(array.getJSONObject(i)));
+        }
+        return movies;
+    }
+
+    private List<Movie> getMovies() {
+        Cursor cursor = null;
+        try {
+            List<Movie> loadedEnteties = new ArrayList<>();
+            cursor = getContext().getContentResolver().query(mMoviesListType.getUri(), null, null, null, null);
+            while (cursor.moveToNext()) {
+                loadedEnteties.add(createEntity(cursor));
+            }
+            return loadedEnteties;
+        } finally {
+            cursor.close();
+        }
+    }
+
+    private void setMovies(List<Movie> movies) {
+        ContentValues[] values = new ContentValues[movies.size()];
+        int i = 0;
+        for (Movie movie : movies) {
+            ContentValues value = new ContentValues();
+            movie.bindToContentValues(value);
+            values[i++] = value;
+        }
+
+        getContext().getContentResolver().bulkInsert(mMoviesListType.getUri(), values);
     }
 
     @Override

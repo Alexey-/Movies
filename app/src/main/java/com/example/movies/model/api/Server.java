@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
 import com.example.movies.MoviesApplication;
@@ -71,6 +72,9 @@ public class Server {
             Uri.Builder uriBuilder = Uri.parse(BASE_URL).buildUpon();
             uriBuilder.appendEncodedPath(request.getMethod().getPath());
             uriBuilder.appendQueryParameter("api_key", getApiKey());
+            for (Pair<String, String> param : request.getParameters()) {
+                uriBuilder.appendQueryParameter(param.first, param.second);
+            }
             url = new URL(uriBuilder.build().toString());
         } catch (MalformedURLException e) {
             throw new RuntimeException("Cannot create url", e);

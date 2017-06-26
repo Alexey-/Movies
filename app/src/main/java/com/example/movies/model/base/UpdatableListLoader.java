@@ -13,12 +13,14 @@ import org.joda.time.Minutes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class UpdatableListLoader<E> extends LocalListLoader<E> {
 
     private boolean mUpdating;
     private LocalDateTime mLastUpdate;
     private ServerError mLastError;
+    protected ReentrantLock mServerAccessLock = new ReentrantLock();
 
     public UpdatableListLoader(Context context, Uri uri) {
         super(context, uri);
@@ -29,16 +31,22 @@ public abstract class UpdatableListLoader<E> extends LocalListLoader<E> {
             return;
         }
         mUpdating = true;
+        for (MoviesListLoader.OnUpdateListener listener : mUpdateListeners) {
+            listener.onUpdateStarted();
+        }
 
         new AsyncTask<Void, Void, ServerError>() {
 
             @Override
             protected ServerError doInBackground(Void... params) {
                 try {
+                    mServerAccessLock.lock();
                     return performUpdate();
                 } catch (Exception e) {
                     Log.e(Log.DEFAULT_TAG, "Error during update", e);
                     return ServerError.UNKNOWN_ERROR;
+                } finally {
+                    mServerAccessLock.unlock();
                 }
             }
 
@@ -75,6 +83,7 @@ public abstract class UpdatableListLoader<E> extends LocalListLoader<E> {
     }
 
     public interface OnUpdateListener {
+        void onUpdateStarted();
         void onUpdateComplete();
         void onUpdateFailed();
     }
