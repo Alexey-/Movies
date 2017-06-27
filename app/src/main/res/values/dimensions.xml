@@ -3,5 +3,7 @@
 
     <dimen name="movie_details_poster_width">128dp</dimen>
     <dimen name="movie_details_poster_height">192dp</dimen>
+
+    <dimen name="tablet_left_pane_width">320dp</dimen>
     
 </resources>

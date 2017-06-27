@@ -67,7 +67,9 @@ public class MainActivity extends AppCompatActivity
                 if (fragment instanceof BaseFragment) {
                     BaseFragment baseFragment = (BaseFragment) fragment;
                     if (mTablet) {
-
+                        if (baseFragment.getId() == R.id.left_pane_container) {
+                            setTitle(baseFragment.getTitle());
+                        }
                     } else {
                         setTitle(baseFragment.getTitle());
                     }
@@ -104,26 +106,28 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onMovieSelected(Movie movie) {
+        MovieDetailsFragment fragment = MovieDetailsFragment.createFragment(movie);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (mTablet) {
-
+            transaction.replace(R.id.right_pane_container, fragment);
         } else {
             mActionBarDrawerToggle.setDrawerIndicatorEnabled(false);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fullscreen_container, MovieDetailsFragment.createFragment(movie));
+            transaction.replace(R.id.fullscreen_container, fragment);
             transaction.addToBackStack(null);
-            transaction.commit();
         }
+        transaction.commit();
     }
 
     private void displayMoviesList(MoviesListType type) {
         MoviesListFragment fragment = MoviesListFragment.createFragment(type);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (mTablet) {
-
+            //transaction.replace(R.id.right_pane_container, null);
+            transaction.replace(R.id.left_pane_container, fragment);
         } else {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fullscreen_container, fragment);
-            transaction.commit();
         }
+        transaction.commit();
     }
 
     @Override

@@ -81,12 +81,6 @@ public class MovieDetailsFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().setTitle(mMovie.getOriginalTitle());
-    }
-
-    @Override
     public String getTitle() {
         return mMovie.getOriginalTitle();
     }

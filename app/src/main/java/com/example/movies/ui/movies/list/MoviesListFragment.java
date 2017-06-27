@@ -1,5 +1,6 @@
 package com.example.movies.ui.movies.list;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,7 @@ import com.example.movies.databinding.MoviesListFragmentBinding;
 import com.example.movies.model.Movie;
 import com.example.movies.model.MoviesListType;
 import com.example.movies.ui.BaseFragment;
+import com.example.movies.utils.DIP;
 
 import java.util.List;
 
@@ -72,22 +74,25 @@ public abstract class MoviesListFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = MoviesListFragmentBinding.inflate(getLayoutInflater(savedInstanceState), container, false);
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int screenWidthPixels = displayMetrics.widthPixels;
-        int screenWidthDp = Math.round(screenWidthPixels / displayMetrics.density);
-
-        int columnsCount = Math.round(screenWidthDp / (float)PREFERRED_CELL_WIDTH_DIP);
-        mCellWidthPixels = screenWidthPixels / columnsCount;
-        mCellHeightPixels = Math.round(mCellWidthPixels * POSTER_ASPECT_RATE);
-
-        mBinding.refreshLayout.setOnRefreshListener(this);
-        mBinding.recycler.setLayoutManager(new GridLayoutManager(getContext(), columnsCount));
-
-        mAdapter.setCellSize(mCellWidthPixels, mCellHeightPixels);
         mBinding.recycler.setAdapter(mAdapter);
+        mBinding.refreshLayout.setOnRefreshListener(this);
+
+        if (getResources().getBoolean(R.bool.is_tablet)) {
+            adjustColumnCount((int) getResources().getDimension(R.dimen.tablet_left_pane_width));
+        } else {
+            adjustColumnCount(getResources().getDisplayMetrics().widthPixels);
+        }
 
         return mBinding.getRoot();
+    }
+
+    private void adjustColumnCount(int containerWidthPx) {
+        int columnsCount = Math.round(DIP.toDp(containerWidthPx) / (float)PREFERRED_CELL_WIDTH_DIP);
+        mCellWidthPixels = containerWidthPx / columnsCount;
+        mCellHeightPixels = Math.round(mCellWidthPixels * POSTER_ASPECT_RATE);
+
+        mBinding.recycler.setLayoutManager(new GridLayoutManager(getContext(), columnsCount));
+        mAdapter.setCellSize(mCellWidthPixels, mCellHeightPixels);
     }
 
     @Override
