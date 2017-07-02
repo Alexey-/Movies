@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.example.movies.MoviesApplication;
+import com.example.movies.model.Video;
 
 public class MoviesContract {
 
@@ -21,6 +22,8 @@ public class MoviesContract {
 
     public static final String PATH_MOVIES_FAVORITES = "favorites";
     public static final Uri FAVORITES_MOVIES_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES_BASE).appendPath(PATH_MOVIES_FAVORITES).build();
+
+    public static final String PATH_VIDEOS = "videos";
 
     public static final class MoviesTable implements BaseColumns {
 
@@ -41,6 +44,18 @@ public class MoviesContract {
         public static final String COLUMN_LIST_TYPE = "list_type";
         public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String COLUMN_SORT_ORDER = "sort_order";
+
+    }
+
+    public static final class VideosTable implements BaseColumns {
+
+        public static final String TABLE_NAME = "videos";
+
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_KEY = "key";
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_TYPE = "type";
+        public static final String COLUMN_SORT_ID = "sort_id";
 
     }
 

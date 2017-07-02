@@ -1,8 +1,12 @@
 package com.example.movies.model.api;
 
+import java.util.List;
+import java.util.Locale;
+
 public enum ServerMethod {
     POPULAR_MOVIES(HttpMethod.GET, "movie/popular"),
-    TOP_RATED_MOVIES(HttpMethod.GET, "movie/top_rated");
+    TOP_RATED_MOVIES(HttpMethod.GET, "movie/top_rated"),
+    VIDEOS(HttpMethod.GET, "movie/%s/videos");
 
     enum HttpMethod {
         GET,
@@ -21,7 +25,12 @@ public enum ServerMethod {
         return mHttpMethod;
     }
 
-    String getPath() {
-        return mPath;
+    String getPath(List<String> pathParameters) {
+        if (pathParameters != null && pathParameters.size() > 0) {
+            return String.format(Locale.US, mPath, pathParameters.toArray(new String[pathParameters.size()]));
+        } else {
+            return mPath;
+        }
     }
+
 }

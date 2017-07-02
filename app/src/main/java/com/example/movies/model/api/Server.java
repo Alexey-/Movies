@@ -70,7 +70,7 @@ public class Server {
         URL url;
         try {
             Uri.Builder uriBuilder = Uri.parse(BASE_URL).buildUpon();
-            uriBuilder.appendEncodedPath(request.getMethod().getPath());
+            uriBuilder.appendEncodedPath(request.getMethod().getPath(request.getPathParameters()));
             uriBuilder.appendQueryParameter("api_key", getApiKey());
             for (Pair<String, String> param : request.getParameters()) {
                 uriBuilder.appendQueryParameter(param.first, param.second);
@@ -105,6 +105,8 @@ public class Server {
                 if (responseCode == 401) {
                     Log.e(TAG, "[" + requestNumber + "] Invalid API key");
                     return new Response(ServerError.INVALID_API_KEY, errorString);
+                } else if (responseCode == 404) {
+                    return new Response(ServerError.OBJECT_NOT_FOUND, errorString);
                 } else {
                     return new Response(ServerError.UNKNOWN_ERROR, errorString);
                 }

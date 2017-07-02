@@ -21,6 +21,8 @@ import static com.example.movies.model.storage.MoviesContract.PATH_MOVIES_BASE;
 import static com.example.movies.model.storage.MoviesContract.PATH_MOVIES_FAVORITES;
 import static com.example.movies.model.storage.MoviesContract.PATH_MOVIES_MOST_POPULAR;
 import static com.example.movies.model.storage.MoviesContract.PATH_MOVIES_TOP_RATED;
+import static com.example.movies.model.storage.MoviesContract.PATH_VIDEOS;
+import static com.example.movies.model.storage.MoviesContract.VideosTable;
 
 public class MoviesContentProvider extends ContentProvider {
 
@@ -30,6 +32,8 @@ public class MoviesContentProvider extends ContentProvider {
     public static final int MOVIES_TOP_RATED = 103;
     public static final int MOVIES_FAVORITES = 104;
     public static final int MOVIES_FAVORITE_WITH_ID = 105;
+    public static final int VIDEOS = 106;
+    public static final int VIDEOS_WITH_ID = 107;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
@@ -42,6 +46,8 @@ public class MoviesContentProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, PATH_MOVIES_BASE + "/" + PATH_MOVIES_TOP_RATED, MOVIES_TOP_RATED);
         uriMatcher.addURI(AUTHORITY, PATH_MOVIES_BASE + "/" + PATH_MOVIES_FAVORITES, MOVIES_FAVORITES);
         uriMatcher.addURI(AUTHORITY, PATH_MOVIES_BASE + "/" + PATH_MOVIES_FAVORITES + "/#", MOVIES_FAVORITE_WITH_ID);
+        uriMatcher.addURI(AUTHORITY, PATH_MOVIES_BASE + "/#/" + PATH_VIDEOS, VIDEOS);
+        uriMatcher.addURI(AUTHORITY, PATH_MOVIES_BASE + "/#/" + PATH_VIDEOS + "/#", VIDEOS_WITH_ID);
 
         return uriMatcher;
     }
@@ -87,6 +93,15 @@ public class MoviesContentProvider extends ContentProvider {
             case MOVIES_FAVORITES:
                 typeToQuery = MoviesListType.FAVORITES;
                 break;
+            case VIDEOS: {
+                String movieId = uri.getPathSegments().get(1);
+                result = db.query(VideosTable.TABLE_NAME, null, VideosTable.COLUMN_MOVIE_ID + " = ?", new String[]{movieId}, null, null, VideosTable.COLUMN_SORT_ID);
+            }   break;
+            case VIDEOS_WITH_ID: {
+                String movieId = uri.getPathSegments().get(1);
+                String videoId = uri.getLastPathSegment();
+                result = db.query(VideosTable.TABLE_NAME, null, VideosTable.COLUMN_MOVIE_ID + " = ? AND " + VideosTable._ID + " = ?", new String[]{movieId, videoId}, null, null, null);
+            }   break;
             default:
                 throw new UnsupportedOperationException("Unsupported uri for query: " + uri);
         }
@@ -175,6 +190,16 @@ public class MoviesContentProvider extends ContentProvider {
                 case MOVIES_TOP_RATED:
                     typeToQuery = MoviesListType.TOP_RATED;
                     break;
+                case VIDEOS: {
+                    String movieId = uri.getPathSegments().get(1);
+                    db.execSQL("DELETE FROM " + VideosTable.TABLE_NAME + " WHERE " + VideosTable.COLUMN_MOVIE_ID + " = \"" + movieId + "\"");
+                    for (int i = 0; i < values.length; ++i) {
+                        ContentValues value = values[i];
+                        value.put(VideosTable.COLUMN_SORT_ID, i);
+                        db.insert(VideosTable.TABLE_NAME, null, value);
+                        result++;
+                    }
+                }   break;
                 default:
                     throw new UnsupportedOperationException("Unsupported uri for bulk insert: " + uri);
             }
@@ -193,9 +218,9 @@ public class MoviesContentProvider extends ContentProvider {
 
                     result++;
                 }
+                cleanupOrphanMovies(db);
             }
 
-            cleanupOrphanMovies(db);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();

@@ -10,7 +10,7 @@ import com.example.movies.utils.Log;
 public class MoviesDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "movies.db";
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     public MoviesDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
@@ -22,6 +22,11 @@ public class MoviesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void createTables(SQLiteDatabase db) {
+        createMoviesTables(db);
+        createVideosTables(db);
+    }
+
+    public void createMoviesTables(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + MoviesContract.MoviesTable.TABLE_NAME + " (" +
                 MoviesContract.MoviesTable._ID + " INTEGER PRIMARY KEY, " +
                 MoviesContract.MoviesTable.COLUMN_ORIGINAL_TITLE + " TEXT NOT NULL, " +
@@ -37,15 +42,29 @@ public class MoviesDatabaseHelper extends SQLiteOpenHelper {
         );
     }
 
+    public void createVideosTables(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + MoviesContract.VideosTable.TABLE_NAME + " (" +
+                MoviesContract.VideosTable._ID + " INTEGER PRIMARY KEY, " +
+                MoviesContract.VideosTable.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                MoviesContract.VideosTable.COLUMN_KEY + " TEXT NOT NULL, " +
+                MoviesContract.VideosTable.COLUMN_NAME + " TEXT, " +
+                MoviesContract.VideosTable.COLUMN_TYPE + " TEXT NOT NULL, " +
+                MoviesContract.VideosTable.COLUMN_SORT_ID + " INTEGER NOT NULL)"
+        );
+    }
+
     public void deleteTables(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.MoviesTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.MovieListTypeCrossTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.VideosTable.TABLE_NAME);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        deleteTables(db);
-        createTables(db);
+        if (oldVersion == 1) {
+            createVideosTables(db);
+            oldVersion++;
+        }
     }
 
     private static final String LOG_TAG = "MoviesDatabase";
@@ -80,6 +99,8 @@ public class MoviesDatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = database.rawQuery("SELECT * FROM " + MoviesContract.MoviesTable.TABLE_NAME, null);
         printCursor(cursor);
         cursor = database.rawQuery("SELECT * FROM " + MoviesContract.MovieListTypeCrossTable.TABLE_NAME, null);
+        printCursor(cursor);
+        cursor = database.rawQuery("SELECT * FROM " + MoviesContract.VideosTable.TABLE_NAME, null);
         printCursor(cursor);
     }
 }

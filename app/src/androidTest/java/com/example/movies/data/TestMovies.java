@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.example.movies.generators.FakeMoviesGenerator;
 import com.example.movies.model.Movie;
 import com.example.movies.model.MoviesListType;
 import com.example.movies.model.storage.MoviesContract;
