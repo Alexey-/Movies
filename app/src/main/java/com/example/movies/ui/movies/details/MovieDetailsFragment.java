@@ -1,5 +1,6 @@
 package com.example.movies.ui.movies.details;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.example.movies.R;
 import com.example.movies.databinding.MovieDetailsFragmentBinding;
 import com.example.movies.model.Movie;
 import com.example.movies.ui.BaseFragment;
+import com.example.movies.utils.CenterInsideDrawable;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -54,9 +56,13 @@ public class MovieDetailsFragment extends BaseFragment {
         mBinding = MovieDetailsFragmentBinding.inflate(getLayoutInflater(savedInstanceState), container, false);
 
         int posterWidthPixels = (int) getResources().getDimension(R.dimen.movie_details_poster_width);
-        Glide.with(this)
-                .load(mMovie.getPosterUrl(Movie.PosterSize.bestFit(posterWidthPixels)))
-                .placeholder(R.drawable.ic_movie_gray)
+        Movie.PosterSize posterSize = Movie.PosterSize.bestFit(posterWidthPixels);
+        Drawable movieIcon = getResources().getDrawable(R.drawable.ic_movie_gray);
+        Drawable placeholder = new CenterInsideDrawable(posterSize.getWidthPixels(), posterSize.getHeightPixels(), movieIcon);
+        Glide.with(getContext())
+                .load(mMovie.getPosterUrl(posterSize))
+                .dontTransform()
+                .placeholder(placeholder)
                 .into(mBinding.poster);
         mBinding.title.setText(mMovie.getOriginalTitle());
         if (mMovie.getReleaseDate() != null) {

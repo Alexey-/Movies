@@ -23,5 +23,6 @@
     <string name="movie_details_release_date">Release date:</string>
     <string name="movie_details_user_rating">User rating:</string>
     <string name="movie_details_plot_synopsis">Synopsis:</string>
+    <string name="movie_details_select">Select a movie</string>
 
 </resources>

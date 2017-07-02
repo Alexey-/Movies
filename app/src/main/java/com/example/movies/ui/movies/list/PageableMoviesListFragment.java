@@ -66,7 +66,6 @@ public class PageableMoviesListFragment extends MoviesListFragment
 
     @Override
     public void onUpdateComplete() {
-        showMessage(R.string.update_complete);
         refreshInterface();
     }
 

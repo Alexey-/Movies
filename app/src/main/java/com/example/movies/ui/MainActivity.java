@@ -21,6 +21,7 @@ import com.example.movies.R;
 import com.example.movies.databinding.MainActivityBinding;
 import com.example.movies.model.Movie;
 import com.example.movies.model.MoviesListType;
+import com.example.movies.ui.movies.details.EmptyDetailsFragment;
 import com.example.movies.ui.movies.details.MovieDetailsFragment;
 import com.example.movies.ui.movies.list.MoviesListFragment;
 import com.example.movies.ui.movies.list.OnMovieSelectedListener;
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         MoviesListFragment fragment = MoviesListFragment.createFragment(type);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (mTablet) {
-            //transaction.replace(R.id.right_pane_container, null);
+            transaction.replace(R.id.right_pane_container, EmptyDetailsFragment.createFragment());
             transaction.replace(R.id.left_pane_container, fragment);
         } else {
             transaction.replace(R.id.fullscreen_container, fragment);

@@ -1,14 +1,19 @@
 package com.example.movies.ui.movies.list;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.Resource;
+import com.bumptech.glide.load.resource.UnitTransformation;
 import com.example.movies.R;
 import com.example.movies.databinding.MovieViewHolderBinding;
 import com.example.movies.model.Movie;
+import com.example.movies.utils.CenterInsideDrawable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,10 +90,13 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Mo
 
         public void setMovie(Movie movie, int widthPixels) {
             mMovie = movie;
+            Movie.PosterSize posterSize = Movie.PosterSize.bestFit(widthPixels);
+            Drawable movieIcon = itemView.getContext().getResources().getDrawable(R.drawable.ic_movie_gray);
+            Drawable placeholder = new CenterInsideDrawable(posterSize.getWidthPixels(), posterSize.getHeightPixels(), movieIcon);
             Glide.with(itemView.getContext())
-                    .load(movie.getPosterUrl(Movie.PosterSize.bestFit(widthPixels)))
-                    .placeholder(R.drawable.ic_movie_gray)
-                    .centerCrop()
+                    .load(movie.getPosterUrl(posterSize))
+                    .dontTransform()
+                    .placeholder(placeholder)
                     .into(mBinding.poster);
         }
     }

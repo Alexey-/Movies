@@ -90,20 +90,30 @@ public class Movie {
     }
 
     public enum PosterSize {
-        EXTRA_SMALL(92, "w92"),
-        SMALL(154, "w154"),
-        MEDIUM(185, "w185"),
-        MEDIUM_LARGE(342, "w342"),
-        LARGE(500, "w500"),
-        EXTRA_LARGE(780, "w780"),
-        ORIGINAL(1024, "original");
+        EXTRA_SMALL(92, 138, "w92"),
+        SMALL(154, 231, "w154"),
+        MEDIUM(185, 278, "w185"),
+        MEDIUM_LARGE(342, 513, "w342"),
+        LARGE(500, 750, "w500"),
+        EXTRA_LARGE(780, 1170, "w780"),
+        ORIGINAL(2000, 3000, "original");
 
         private int mWidthPixels;
+        private int mHeightPixels;
         private String mKey;
 
-        private PosterSize(int widthPixels, String key) {
+        private PosterSize(int widthPixels, int heightPixels, String key) {
             mWidthPixels = widthPixels;
+            mHeightPixels = heightPixels;
             mKey = key;
+        }
+
+        public int getWidthPixels() {
+            return mWidthPixels;
+        }
+
+        public int getHeightPixels() {
+            return mHeightPixels;
         }
 
         public static PosterSize bestFit(int widthPixels) {
