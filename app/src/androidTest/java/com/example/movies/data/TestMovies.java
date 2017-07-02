@@ -86,7 +86,7 @@ public class TestMovies {
         FakeMoviesGenerator.insertMovies(mContext, MoviesListType.TOP_RATED, movies);
 
         ContentResolver contentResolver = mContext.getContentResolver();
-        Cursor cursor = contentResolver.query(MoviesContract.MOVIES_URI.buildUpon().appendPath(movie2.getId()).build(), null, null, null, null);
+        Cursor cursor = contentResolver.query(MoviesContract.getMovieUri(movie2.getId()), null, null, null, null);
         Assert.assertTrue(cursor.moveToFirst());
         Assert.assertEquals(1, cursor.getCount());
         Assert.assertEquals(movie2, new Movie(cursor));
@@ -107,9 +107,9 @@ public class TestMovies {
         FakeMoviesGenerator.insertMovies(mContext, MoviesListType.TOP_RATED, movies);
 
         TestContentObserver observer = TestContentObserver.observeUri(mContext, MoviesContract.FAVORITES_MOVIES_URI);
-        FakeMoviesGenerator.addToFavorites(mContext, movie3);
+        movie3.addToFavorites(mContext);
         observer.waitForNotificationOrFail(1);
-        FakeMoviesGenerator.addToFavorites(mContext, movie2);
+        movie2.addToFavorites(mContext);
         observer.waitForNotificationOrFail(2);
 
         printDatabase();
@@ -121,7 +121,7 @@ public class TestMovies {
         assertMoviesEqual(MoviesContract.MOVIES_URI, movies);
         assertMoviesEqual(MoviesContract.FAVORITES_MOVIES_URI, currentFavorites);
 
-        FakeMoviesGenerator.removeFromFavorites(mContext, movie3);
+        movie3.removeFromFavorites(mContext);
         observer.waitForNotificationOrFail(3);
 
         printDatabase();
@@ -175,7 +175,7 @@ public class TestMovies {
         movies.add(movie3);
 
         FakeMoviesGenerator.insertMovies(mContext, MoviesListType.MOST_POPULAR, movies);
-        FakeMoviesGenerator.addToFavorites(mContext, movie1);
+        movie1.addToFavorites(mContext);
 
         List<Movie> shortMovies = new ArrayList<>();
         shortMovies.add(movie2);
@@ -185,12 +185,12 @@ public class TestMovies {
         printDatabase();
         assertMoviesEqual(MoviesContract.MOVIES_URI, movies);
 
-        FakeMoviesGenerator.removeFromFavorites(mContext, movie1);
+        movie1.removeFromFavorites(mContext);
         printDatabase();
         assertMoviesEqual(MoviesContract.MOVIES_URI, shortMovies);
 
         ContentResolver contentResolver = mContext.getContentResolver();
-        Cursor cursor = contentResolver.query(MoviesContract.MOVIES_URI.buildUpon().appendPath(movie1.getId()).build(), null, null, null, null);
+        Cursor cursor = contentResolver.query(MoviesContract.getMovieUri(movie1.getId()), null, null, null, null);
         Assert.assertEquals(0, cursor.getCount());
         cursor.close();
     }

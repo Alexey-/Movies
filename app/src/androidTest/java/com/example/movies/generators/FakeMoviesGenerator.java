@@ -54,16 +54,4 @@ public class FakeMoviesGenerator {
         contentResolver.bulkInsert(targetUri, values);
     }
 
-    public static void addToFavorites(Context context, Movie movie) {
-        ContentResolver contentResolver = context.getContentResolver();
-        ContentValues values = new ContentValues();
-        values.put(MoviesContract.MoviesTable._ID, movie.getId());
-        contentResolver.insert(MoviesContract.FAVORITES_MOVIES_URI, values);
-    }
-
-    public static void removeFromFavorites(Context context, Movie movie) {
-        ContentResolver contentResolver = context.getContentResolver();
-        contentResolver.delete(MoviesContract.FAVORITES_MOVIES_URI.buildUpon().appendPath(movie.getId()).build(), null, null);
-    }
-
 }

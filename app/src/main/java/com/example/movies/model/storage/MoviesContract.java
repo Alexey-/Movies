@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.example.movies.MoviesApplication;
+import com.example.movies.model.Movie;
 import com.example.movies.model.Video;
 
 public class MoviesContract {
@@ -13,6 +14,9 @@ public class MoviesContract {
 
     public static final String PATH_MOVIES_BASE = "movies";
     public static final Uri MOVIES_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES_BASE).build();
+    public static final Uri getMovieUri(String movieId) {
+        return MOVIES_URI.buildUpon().appendPath(movieId).build();
+    }
 
     public static final String PATH_MOVIES_MOST_POPULAR = "most_popular";
     public static final Uri MOST_POPULAR_MOVIES_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES_BASE).appendPath(PATH_MOVIES_MOST_POPULAR).build();
@@ -22,8 +26,17 @@ public class MoviesContract {
 
     public static final String PATH_MOVIES_FAVORITES = "favorites";
     public static final Uri FAVORITES_MOVIES_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES_BASE).appendPath(PATH_MOVIES_FAVORITES).build();
+    public static final Uri getFavoriteMovieUri(String movieId) {
+        return FAVORITES_MOVIES_URI.buildUpon().appendPath(movieId).build();
+    }
 
     public static final String PATH_VIDEOS = "videos";
+    public static final Uri getVideosUri(String movieId) {
+        return MOVIES_URI.buildUpon().appendPath(movieId).appendPath(PATH_VIDEOS).build();
+    }
+    public static final Uri getVideoUrl(String movieId, String videoId) {
+        return MOVIES_URI.buildUpon().appendPath(movieId).appendPath(PATH_VIDEOS).appendPath(videoId).build();
+    }
 
     public static final class MoviesTable implements BaseColumns {
 

@@ -31,7 +31,7 @@ public class Movie {
     public static Movie loadFromDatabase(Context context, String id) {
         Cursor cursor = null;
         try {
-            cursor = context.getContentResolver().query(MoviesContract.MOVIES_URI.buildUpon().appendPath(id).build(), null, null, null, null);
+            cursor = context.getContentResolver().query(MoviesContract.getMovieUri(id), null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 return new Movie(cursor);
             } else {
@@ -153,7 +153,7 @@ public class Movie {
     public boolean isFavorite(Context context) {
         Cursor cursor = null;
         try {
-            cursor = context.getContentResolver().query(MoviesContract.FAVORITES_MOVIES_URI.buildUpon().appendPath(mId).build(), null, null, null, null);
+            cursor = context.getContentResolver().query(MoviesContract.getFavoriteMovieUri(mId), null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 return true;
             } else {
@@ -175,7 +175,7 @@ public class Movie {
 
     public void removeFromFavorites(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
-        contentResolver.delete(MoviesContract.FAVORITES_MOVIES_URI.buildUpon().appendPath(mId).build(), null, null);
+        contentResolver.delete(MoviesContract.getFavoriteMovieUri(mId), null, null);
     }
 
     @Override

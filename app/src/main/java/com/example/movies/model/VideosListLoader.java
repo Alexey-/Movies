@@ -25,7 +25,7 @@ public class VideosListLoader extends UpdatableListLoader<Video> {
     private Movie mMovie;
 
     public VideosListLoader(Context context, Movie movie) {
-        super(context, MoviesContract.MOVIES_URI.buildUpon().appendPath(movie.getId()).appendPath(MoviesContract.PATH_VIDEOS).build());
+        super(context, MoviesContract.getVideosUri(movie.getId()));
         mMovie = movie;
     }
 
@@ -58,7 +58,7 @@ public class VideosListLoader extends UpdatableListLoader<Video> {
                     values[i++] = value;
                 }
 
-                getContext().getContentResolver().bulkInsert(MoviesContract.MOVIES_URI.buildUpon().appendPath(mMovie.getId()).appendPath(MoviesContract.PATH_VIDEOS).build(), values);
+                getContext().getContentResolver().bulkInsert(MoviesContract.getVideosUri(mMovie.getId()), values);
 
                 return null;
             } catch (JSONException e) {

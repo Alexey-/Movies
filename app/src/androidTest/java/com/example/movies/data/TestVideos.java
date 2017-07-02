@@ -65,7 +65,7 @@ public class TestVideos {
         List<Movie> movies = new ArrayList<>();
         movies.add(movie);
         FakeMoviesGenerator.insertMovies(mContext, MoviesListType.TOP_RATED, movies);
-        TestContentObserver observer = TestContentObserver.observeUri(mContext, MoviesContract.MOVIES_URI.buildUpon().appendPath(movie.getId()).appendPath(MoviesContract.PATH_VIDEOS).build());
+        TestContentObserver observer = TestContentObserver.observeUri(mContext, MoviesContract.getVideosUri(movie.getId()));
 
         List<Video> randomVideos = new ArrayList<Video>();
         for (int i = 0; i < 10; ++i) {
@@ -75,7 +75,7 @@ public class TestVideos {
 
         observer.waitForNotificationOrFail(1);
         printDatabase();
-        assertVideosEqual(MoviesContract.MOVIES_URI.buildUpon().appendPath(movie.getId()).appendPath(MoviesContract.PATH_VIDEOS).build(), movie, randomVideos);
+        assertVideosEqual(MoviesContract.getVideosUri(movie.getId()), movie, randomVideos);
     }
 
     @Test
@@ -99,8 +99,8 @@ public class TestVideos {
         }
         FakeVideosGenerator.insertVideos(mContext, movie2, randomVideos2);
         printDatabase();
-        assertVideosEqual(MoviesContract.MOVIES_URI.buildUpon().appendPath(movie1.getId()).appendPath(MoviesContract.PATH_VIDEOS).build(), movie1, randomVideos1);
-        assertVideosEqual(MoviesContract.MOVIES_URI.buildUpon().appendPath(movie2.getId()).appendPath(MoviesContract.PATH_VIDEOS).build(), movie2, randomVideos2);
+        assertVideosEqual(MoviesContract.getVideosUri(movie1.getId()), movie1, randomVideos1);
+        assertVideosEqual(MoviesContract.getVideosUri(movie2.getId()), movie2, randomVideos2);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class TestVideos {
         List<Movie> movies = new ArrayList<>();
         movies.add(movie);
         FakeMoviesGenerator.insertMovies(mContext, MoviesListType.TOP_RATED, movies);
-        TestContentObserver observer = TestContentObserver.observeUri(mContext, MoviesContract.MOVIES_URI.buildUpon().appendPath(movie.getId()).appendPath(MoviesContract.PATH_VIDEOS).build());
+        TestContentObserver observer = TestContentObserver.observeUri(mContext, MoviesContract.getVideosUri(movie.getId()));
 
         List<Video> randomVideos = new ArrayList<Video>();
         for (int i = 0; i < 10; ++i) {
@@ -129,7 +129,7 @@ public class TestVideos {
 
         observer.waitForNotificationOrFail(2);
         printDatabase();
-        assertVideosEqual(MoviesContract.MOVIES_URI.buildUpon().appendPath(movie.getId()).appendPath(MoviesContract.PATH_VIDEOS).build(), movie, updatedRandomVideos);
+        assertVideosEqual(MoviesContract.getVideosUri(movie.getId()), movie, updatedRandomVideos);
     }
 
     @After

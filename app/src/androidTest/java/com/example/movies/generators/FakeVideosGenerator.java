@@ -32,7 +32,7 @@ public class FakeVideosGenerator {
 
     public static void insertVideos(Context context, Movie movie, List<Video> videos) {
         ContentResolver contentResolver = context.getContentResolver();
-        Uri targetUri = MoviesContract.MOVIES_URI.buildUpon().appendPath(movie.getId()).appendPath(MoviesContract.PATH_VIDEOS).build();
+        Uri targetUri = MoviesContract.getVideosUri(movie.getId());
         ContentValues[] values = new ContentValues[videos.size()];
         int i = 0;
         for (Video video : videos) {
