@@ -3,6 +3,7 @@ package com.example.movies.ui.movies.list;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -102,16 +103,6 @@ public abstract class MoviesListFragment extends BaseFragment
     }
 
     protected abstract void refreshInterface();
-
-    private Snackbar mSnackbar;
-
-    protected void showMessage(int messageRes) {
-        if (mSnackbar != null) {
-            mSnackbar.dismiss();
-        }
-        mSnackbar = Snackbar.make(mBinding.getRoot(), messageRes, Snackbar.LENGTH_LONG);
-        mSnackbar.show();
-    }
 
     @Override
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {

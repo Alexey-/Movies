@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movies.R;
-import com.example.movies.model.Movie;
 import com.example.movies.ui.BaseFragment;
 
 public class EmptyDetailsFragment extends BaseFragment {

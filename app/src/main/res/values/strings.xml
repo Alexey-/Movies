@@ -25,4 +25,11 @@
     <string name="movie_details_plot_synopsis">Synopsis:</string>
     <string name="movie_details_select">Select a movie</string>
 
+    <!-- Video types -->
+    <string name="video_type_trailer">Trailers</string>
+    <string name="video_type_teaser">Teasers</string>
+    <string name="video_type_clip">Clips</string>
+    <string name="video_type_featurette">Featurettes</string>
+
+
 </resources>

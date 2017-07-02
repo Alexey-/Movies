@@ -44,7 +44,7 @@ public class MoviesDatabaseHelper extends SQLiteOpenHelper {
 
     public void createVideosTables(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + MoviesContract.VideosTable.TABLE_NAME + " (" +
-                MoviesContract.VideosTable._ID + " INTEGER PRIMARY KEY, " +
+                MoviesContract.VideosTable._ID + " TEXT PRIMARY KEY, " +
                 MoviesContract.VideosTable.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 MoviesContract.VideosTable.COLUMN_KEY + " TEXT NOT NULL, " +
                 MoviesContract.VideosTable.COLUMN_NAME + " TEXT, " +

@@ -3,7 +3,9 @@ package com.example.movies.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.StringRes;
 
+import com.example.movies.R;
 import com.example.movies.model.storage.MoviesContract;
 
 import org.json.JSONException;
@@ -16,10 +18,20 @@ public class Video {
     public static class UnknownVideoSiteException extends Exception {}
 
     public static enum Type {
-        TRAILER,
-        TEASER,
-        CLIP,
-        FEATURETTE;
+        TRAILER(R.string.video_type_trailer),
+        TEASER(R.string.video_type_teaser),
+        CLIP(R.string.video_type_clip),
+        FEATURETTE(R.string.video_type_featurette);
+
+        private int mTitleRes;
+
+        private Type(@StringRes int titleRes) {
+            mTitleRes = titleRes;
+        }
+
+        public @StringRes int getTitleRes() {
+            return mTitleRes;
+        }
     }
 
     private String mId;
