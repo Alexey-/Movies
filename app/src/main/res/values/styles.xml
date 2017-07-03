@@ -19,23 +19,23 @@
         <item name="color">@color/colorTextInverse</item>
     </style>
 
-    <style name="MovieDetailsHintText">
+    <style name="HintText">
         <item name="android:textSize">16dp</item>
     </style>
 
-    <style name="MovieDetailsVeryImportantText">
+    <style name="VeryImportantText">
         <item name="android:textSize">18dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorTextMain</item>
     </style>
 
-    <style name="MovieDetailsImportantText">
+    <style name="ImportantText">
         <item name="android:textSize">16dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorTextMain</item>
     </style>
 
-    <style name="MovieDetailsNormalText">
+    <style name="NormalText">
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">@color/colorTextMain</item>
     </style>

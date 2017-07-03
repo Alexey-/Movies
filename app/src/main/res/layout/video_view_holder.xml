@@ -4,7 +4,7 @@
 
     <TextView
         android:id="@+id/title"
-        style="@style/MovieDetailsNormalText"
+        style="@style/NormalText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/default_touch_selector"

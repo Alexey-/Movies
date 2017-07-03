@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardBackgroundColor="@android:color/white"
+            card_view:cardElevation="4dp"
+            card_view:cardUseCompatPadding="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"
+                android:paddingTop="0dp">
+
+                <ImageButton
+                    android:id="@+id/more"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/default_touch_selector"
+                    android:src="@drawable/ic_more_vert"/>
+
+                <TextView
+                    android:id="@+id/author"
+                    style="@style/ImportantText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@id/more"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    tools:text="J. R. R. Tolkien"/>
+
+                <TextView
+                    android:id="@+id/content"
+                    style="@style/NormalText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/author"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque rhoncus nulla lacinia vehicula lobortis. Fusce consectetur dapibus fermentum. Phasellus sit amet sapien eget elit vehicula interdum. Pellentesque pharetra dolor non massa placerat feugiat. Quisque at suscipit nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vivamus faucibus eu erat non dictum. Proin pulvinar ex est, ut gravida dolor mattis consequat. Mauris tortor velit, lacinia euismod fermentum ut, ornare quis orci. Suspendisse nec feugiat odio, non faucibus augue. Ut quis lacinia ipsum, nec imperdiet turpis."/>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </FrameLayout>
+
+</layout>

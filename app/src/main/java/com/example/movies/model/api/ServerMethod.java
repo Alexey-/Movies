@@ -6,7 +6,8 @@ import java.util.Locale;
 public enum ServerMethod {
     POPULAR_MOVIES(HttpMethod.GET, "movie/popular"),
     TOP_RATED_MOVIES(HttpMethod.GET, "movie/top_rated"),
-    VIDEOS(HttpMethod.GET, "movie/%s/videos");
+    VIDEOS(HttpMethod.GET, "movie/%s/videos"),
+    REVIEWS(HttpMethod.GET, "movie/%s/reviews");
 
     enum HttpMethod {
         GET,

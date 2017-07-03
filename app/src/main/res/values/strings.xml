@@ -20,6 +20,8 @@
     <string name="favorites_no_favorites_yet">You haven\'t added anything to favorites yet. Press the star icon in one of the movies you like</string>
 
     <!-- Movie details activity -->
+    <string name="movie_details_general_description">Description</string>
+    <string name="movie_details_reviews">Reviews</string>
     <string name="movie_details_release_date">Release date:</string>
     <string name="movie_details_user_rating">User rating:</string>
     <string name="movie_details_plot_synopsis">Synopsis:</string>
@@ -31,5 +33,9 @@
     <string name="video_type_clip">Clips</string>
     <string name="video_type_featurette">Featurettes</string>
 
+    <!-- Reviews -->
+    <string name="reviews_cannot_open">Cannot open review</string>
+    <string name="reviews_open_in_browser">Open in browser</string>
+    <string name="reviews_empty">No reviews for this movie yet</string>
 
 </resources>

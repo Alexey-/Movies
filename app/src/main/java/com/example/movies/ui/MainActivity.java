@@ -23,8 +23,10 @@ import com.example.movies.model.Movie;
 import com.example.movies.model.MoviesListType;
 import com.example.movies.ui.movies.details.EmptyDetailsFragment;
 import com.example.movies.ui.movies.details.MovieDetailsFragment;
+import com.example.movies.ui.movies.details.MovieDetailsPagerFragment;
 import com.example.movies.ui.movies.list.MoviesListFragment;
 import com.example.movies.ui.movies.list.OnMovieSelectedListener;
+import com.example.movies.ui.movies.review.ReviewsListFragment;
 
 public class MainActivity extends AppCompatActivity
         implements OnMovieSelectedListener, NavigationView.OnNavigationItemSelectedListener, FragmentManager.OnBackStackChangedListener {
@@ -107,7 +109,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onMovieSelected(Movie movie) {
-        MovieDetailsFragment fragment = MovieDetailsFragment.createFragment(movie);
+        MovieDetailsPagerFragment fragment = MovieDetailsPagerFragment.createFragment(movie);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (mTablet) {
             transaction.replace(R.id.right_pane_container, fragment);

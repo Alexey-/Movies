@@ -48,8 +48,9 @@ public class Video {
         mId = json.getString("id");
         mKey = json.getString("key");
         mName = json.optString("name");
-        mType = Type.valueOf(json.getString("type").toUpperCase());
-        if (mType == null) {
+        try {
+            mType = Type.valueOf(json.getString("type").toUpperCase());
+        } catch (IllegalArgumentException e) {
             throw new UnknownVideoTypeException();
         }
     }

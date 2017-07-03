@@ -10,7 +10,7 @@ import com.example.movies.utils.Log;
 public class MoviesDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "movies.db";
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
 
     public MoviesDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
@@ -24,6 +24,7 @@ public class MoviesDatabaseHelper extends SQLiteOpenHelper {
     public void createTables(SQLiteDatabase db) {
         createMoviesTables(db);
         createVideosTables(db);
+        createReviewsTables(db);
     }
 
     public void createMoviesTables(SQLiteDatabase db) {
@@ -53,16 +54,32 @@ public class MoviesDatabaseHelper extends SQLiteOpenHelper {
         );
     }
 
+    public void createReviewsTables(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + MoviesContract.ReviewsTable.TABLE_NAME + " (" +
+                MoviesContract.ReviewsTable._ID + " TEXT PRIMARY KEY, " +
+                MoviesContract.ReviewsTable.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                MoviesContract.ReviewsTable.COLUMN_AUTHOR + " TEXT, " +
+                MoviesContract.ReviewsTable.COLUMN_CONTENT + " TEXT, " +
+                MoviesContract.ReviewsTable.COLUMN_URL + " TEXT, " +
+                MoviesContract.ReviewsTable.COLUMN_SORT_ID + " INTEGER NOT NULL)"
+        );
+    }
+
     public void deleteTables(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.MoviesTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.MovieListTypeCrossTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.VideosTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.ReviewsTable.TABLE_NAME);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion == 1) {
             createVideosTables(db);
+            oldVersion++;
+        }
+        if (oldVersion == 2) {
+            createReviewsTables(db);
             oldVersion++;
         }
     }

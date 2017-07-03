@@ -9,9 +9,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -50,7 +47,6 @@ public class MovieDetailsFragment extends BaseFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
 
         mMovie = Movie.loadFromDatabase(getContext(), getArguments().getString(ARGUMENT_MOVIE_ID));
         if (mMovie == null) {
@@ -122,33 +118,6 @@ public class MovieDetailsFragment extends BaseFragment
     @Override
     public String getTitle() {
         return mMovie.getOriginalTitle();
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_movie_details, menu);
-        MenuItem item = menu.findItem(R.id.favorite);
-        if (mMovie.isFavorite(getContext())) {
-            item.setIcon(R.drawable.ic_favorite_white);
-        } else {
-            item.setIcon(R.drawable.ic_favorite_border_white);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.favorite) {
-            if (mMovie.isFavorite(getContext())) {
-                mMovie.removeFromFavorites(getContext());
-                item.setIcon(R.drawable.ic_favorite_border_white);
-            } else {
-                mMovie.addToFavorites(getContext());
-                item.setIcon(R.drawable.ic_favorite_white);
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

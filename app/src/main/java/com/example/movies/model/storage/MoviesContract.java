@@ -38,6 +38,15 @@ public class MoviesContract {
         return MOVIES_URI.buildUpon().appendPath(movieId).appendPath(PATH_VIDEOS).appendPath(videoId).build();
     }
 
+    public static final String PATH_REVIEWS = "reviews";
+    public static final Uri getReviewsUri(String movieId) {
+        return MOVIES_URI.buildUpon().appendPath(movieId).appendPath(PATH_REVIEWS).build();
+    }
+    public static final Uri getReviewsUrl(String movieId, String reviewId) {
+        return MOVIES_URI.buildUpon().appendPath(movieId).appendPath(PATH_REVIEWS).appendPath(reviewId).build();
+    }
+
+
     public static final class MoviesTable implements BaseColumns {
 
         public static final String TABLE_NAME = "movies";
@@ -68,6 +77,18 @@ public class MoviesContract {
         public static final String COLUMN_KEY = "key";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_TYPE = "type";
+        public static final String COLUMN_SORT_ID = "sort_id";
+
+    }
+
+    public static final class ReviewsTable implements BaseColumns {
+
+        public static final String TABLE_NAME = "reviews";
+
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_AUTHOR = "key";
+        public static final String COLUMN_CONTENT = "name";
+        public static final String COLUMN_URL = "type";
         public static final String COLUMN_SORT_ID = "sort_id";
 
     }
