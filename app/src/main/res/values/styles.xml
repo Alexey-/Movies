@@ -45,4 +45,10 @@
         <item name="android:textColor">@color/colorGray</item>
     </style>
 
+    <style name="NavigationTheme">
+        <item name="android:textSize">16dp</item>
+        <item name="android:listPreferredItemHeightSmall">48dp</item>
+        <item name="android:textColor">@color/colorTextMain</item>
+    </style>
+
 </resources>

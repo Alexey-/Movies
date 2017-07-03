@@ -11,6 +11,7 @@
     <string name="close_menu">Close menu</string>
 
     <!-- Main menu -->
+    <string name="navigation_header">Select a category</string>
     <string name="movies_most_popular">Most Popular</string>
     <string name="movies_top_rated">Top Rated</string>
     <string name="movies_favorite">Favorite</string>
