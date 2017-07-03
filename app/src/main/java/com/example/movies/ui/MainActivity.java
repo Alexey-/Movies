@@ -184,4 +184,16 @@ public class MainActivity extends AppCompatActivity
             mSideMenuEnabled = enabled;
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("mSideMenuEnabled", mSideMenuEnabled);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        setMenuEnabled(savedInstanceState.getBoolean("mSideMenuEnabled"));
+    }
 }
