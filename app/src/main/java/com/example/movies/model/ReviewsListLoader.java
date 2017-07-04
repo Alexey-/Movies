@@ -52,9 +52,6 @@ public class ReviewsListLoader extends PageableListLoader<Review> {
         if (response.isSuccessful()) {
             try {
                 List<Review> newReviews = parseReviews(response);
-                if (newReviews.size() == 0) {
-                    onEndReached();
-                }
                 List<Review> currentReviews = getReviews();
                 currentReviews.addAll(newReviews);
                 setReviews(currentReviews);
@@ -82,6 +79,7 @@ public class ReviewsListLoader extends PageableListLoader<Review> {
         for (int i = 0; i < array.length(); ++i) {
             reviews.add(new Review(mMovie, array.getJSONObject(i)));
         }
+        mTotalPages = json.getInt("total_pages");
         return reviews;
     }
 

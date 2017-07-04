@@ -46,6 +46,8 @@ public class ReviewsListFragment extends BaseFragment
 
     private ReviewsListLoader mReviewsListLoader;
 
+    private EndlessScrollListener mScrollListener;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,14 +87,15 @@ public class ReviewsListFragment extends BaseFragment
         }
         mBinding.recycler.setLayoutManager(layoutManager);
 
-        mBinding.recycler.addOnScrollListener(new EndlessScrollListener(mBinding.recycler.getLayoutManager()) {
+        mScrollListener = new EndlessScrollListener(mBinding.recycler.getLayoutManager()) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 if (mReviewsListLoader.canLoadMore()) {
                     mReviewsListLoader.loadNextPage();
                 }
             }
-        });
+        };
+        mBinding.recycler.addOnScrollListener(mScrollListener);
 
         return mBinding.getRoot();
     }
@@ -144,6 +147,7 @@ public class ReviewsListFragment extends BaseFragment
     @Override
     public void onUpdateComplete() {
         refreshInterface();
+        mScrollListener.resetState();
     }
 
     @Override

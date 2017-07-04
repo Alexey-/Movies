@@ -9,6 +9,8 @@ import com.example.movies.model.api.ServerError;
 import com.example.movies.utils.Log;
 
 import org.joda.time.LocalDateTime;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +19,11 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class PageableListLoader<E> extends UpdatableListLoader<E> {
 
     private boolean mLoadingNextPage;
-    private int mCurrentPage = 1;
-    private boolean mCanLoadMore;
+    protected int mCurrentPage = 1;
+    protected int mTotalPages;
 
     public PageableListLoader(Context context, Uri uri) {
         super(context, uri);
-        mCanLoadMore = true;
         addOnUpdateListener(new OnUpdateListener() {
             @Override
             public void onUpdateStarted() {
@@ -32,7 +33,6 @@ public abstract class PageableListLoader<E> extends UpdatableListLoader<E> {
             @Override
             public void onUpdateComplete() {
                 mCurrentPage = 1;
-                mCanLoadMore = true;
             }
 
             @Override
@@ -91,11 +91,7 @@ public abstract class PageableListLoader<E> extends UpdatableListLoader<E> {
     }
 
     public boolean canLoadMore() {
-        return mCanLoadMore;
-    }
-
-    protected void onEndReached() {
-        mCanLoadMore = false;
+        return mTotalPages > mCurrentPage;
     }
 
     public interface OnPagingListener {
@@ -113,6 +109,5 @@ public abstract class PageableListLoader<E> extends UpdatableListLoader<E> {
     public void removeOnPagingListener(OnPagingListener listener) {
         mPagingListeners.remove(listener);
     }
-
 
 }

@@ -73,9 +73,6 @@ public class MoviesListLoader extends PageableListLoader<Movie> {
         if (response.isSuccessful()) {
             try {
                 List<Movie> newMovies = parseMovies(response);
-                if (newMovies.size() == 0) {
-                    onEndReached();
-                }
                 List<Movie> currentMovies = getMovies();
                 currentMovies.addAll(newMovies);
                 setMovies(currentMovies);
@@ -102,6 +99,7 @@ public class MoviesListLoader extends PageableListLoader<Movie> {
         for (int i = 0; i < array.length(); ++i) {
             movies.add(new Movie(array.getJSONObject(i)));
         }
+        mTotalPages = json.getInt("total_pages");
         return movies;
     }
 

@@ -22,6 +22,8 @@ public class PageableMoviesListFragment extends MoviesListFragment
 
     private PageableListLoader<Movie> mMoviesListLoader;
 
+    private EndlessScrollListener mScrollListener;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,14 +33,15 @@ public class PageableMoviesListFragment extends MoviesListFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mBinding.recycler.addOnScrollListener(new EndlessScrollListener(mBinding.recycler.getLayoutManager()) {
+        mScrollListener = new EndlessScrollListener(mBinding.recycler.getLayoutManager()) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 if (mMoviesListLoader.canLoadMore()) {
                     mMoviesListLoader.loadNextPage();
                 }
             }
-        });
+        };
+        mBinding.recycler.addOnScrollListener(mScrollListener);
     }
 
     @Override
@@ -67,6 +70,7 @@ public class PageableMoviesListFragment extends MoviesListFragment
     @Override
     public void onUpdateComplete() {
         refreshInterface();
+        mScrollListener.resetState();
     }
 
     @Override
